@@ -5,15 +5,13 @@ import time
 from dotenv import load_dotenv
 from datetime import datetime
 from datetime import timedelta
-
+from dateutil import parser
 
 load_dotenv()
 
 
-def get_job(current_timestamp, dict_job={}):
-    current_timestamp = datetime.utcfromtimestamp(int(current_timestamp)).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+def get_job(current_timestamp1, current_timestamp2, dict_job={}):
+
     Client_ID = os.getenv("Client_ID")
     Client_Secret = os.getenv("Client_Secret")
     headers = {"Authorization": f"OAuth {Client_Secret}"}
@@ -28,13 +26,13 @@ def get_job(current_timestamp, dict_job={}):
     }
     answer = requests.get(url, params=params)
     for i in answer.json()["items"]:
-        if i["published_at"] > current_timestamp:
-            dict_job[str(i["published_at"])] = [
-                i["name"],
-                i["apply_alternate_url"],
-                i["snippet"],
-                i["snippet"],
-            ]
+        date_search = parser.parse(i["published_at"]).timestamp()
+        if date_search > current_timestamp1 and date_search < current_timestamp2:
+            name = i["name"]
+            url = i["apply_alternate_url"]
+            name = name.encode().decode()
+            url = url.encode().decode()
+            dict_job[i["published_at"]] = [name, url]
             send_message(dict_job[i["published_at"]])
     return
 
@@ -70,12 +68,14 @@ def get_area(city):
 
 
 def main():
-    current_timestamp = 1587752745
+    current_timestamp1 = 1587752745
+    current_timestamp2 = 1613318183
     while True:
         try:
-            new_homework = get_job(current_timestamp)
+            new_homework = get_job(current_timestamp1, current_timestamp2)
             time.sleep(300)  # опрашивать раз в пять минут
-            current_timestamp = datetime.now().timestamp()
+            current_timestamp1 = current_timestamp2
+            current_timestamp2 = datetime.now().timestamp()
         except Exception as e:
             print(f"Бот упал с ошибкой: {e}")
             time.sleep(5)
