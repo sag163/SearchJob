@@ -1,1 +1,1 @@
-worker: python search_job.py
+worker: python3 search_job.py
