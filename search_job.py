@@ -66,10 +66,9 @@ def main():
             time.sleep(3)  # опрашивать раз в пять минут
             current_timestamp1 = current_timestamp2
             current_timestamp2 = datetime.now().timestamp()
-            print(111111111111111)
         except Exception as e:
             print(f"Бот упал с ошибкой: {e}")
-            time.sleep(5)
+            time.sleep(300)
             continue
 
 
