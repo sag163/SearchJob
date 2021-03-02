@@ -63,7 +63,7 @@ def main():
     while True:
         try:
             get_job(current_timestamp1, current_timestamp2)
-            time.sleep(3)  # опрашивать раз в пять минут
+            time.sleep(300)  # опрашивать раз в пять минут
             current_timestamp1 = current_timestamp2
             current_timestamp2 = datetime.now().timestamp()
         except Exception as e:
