@@ -1,3 +1,7 @@
+# coding: utf-8
+
+
+import json
 import os
 import requests
 import telegram
@@ -11,7 +15,7 @@ load_dotenv()
 hh_token = os.getenv('HH_TOKEN')
 
 
-def get_job(current_timestamp1, current_timestamp2, dict_job={}):
+def get_job(current_timestamp1, current_timestamp2):
     """Функция получает на вход 2 даты и проверяет есть ли в указанном
     временном диапазоне вакансии на hh.
     Если такие есть, то отправляет их в телеграмм."""
@@ -29,13 +33,11 @@ def get_job(current_timestamp1, current_timestamp2, dict_job={}):
         date_search = parser.parse(i["published_at"]).timestamp()
         if (date_search > current_timestamp1 and
                 date_search < current_timestamp2):
-
             name = i["name"]
             url = i["apply_alternate_url"]
-            name = name.encode().decode()
-            url = url.encode().decode()
-            dict_job[i["published_at"]] = [name, url]
-            send_message(dict_job[i["published_at"]])
+            message = name + '\n' + url
+            send_message(message)
+
     return
 
 
